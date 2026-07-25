@@ -1,0 +1,42 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #333;
+  color: white;
+}
+
+.navigation {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 1rem;
+}
+
+.navigationItem {
+  display: flex;
+  align-items: center;
+}
+
+.header .headerLink {
+  color: inherit;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.header .headerLink:hover {
+  color: #ddd;
+}
+
+.header .navigationLink {
+  color: inherit;
+  font-size: 1rem;
+  text-decoration: none;
+}
+
+.header .navigationLink:hover {
+  color: #ddd;
+}
