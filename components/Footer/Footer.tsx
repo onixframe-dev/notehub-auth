@@ -9,7 +9,9 @@ export default function Footer() {
           <p>Developer: Hordzcin Ihar</p>
           <p>
             Contact us:
-            <a href="onixframe.dev@gmail.com">onixframe.dev@gmail.com</a>
+            <a href="mailto:onixframe.dev@gmail.com">
+              onixframe.dev@gmail.com
+            </a>
           </p>
         </div>
       </div>
