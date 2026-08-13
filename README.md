@@ -1,6 +1,6 @@
-# NoteHub Auth
+# Onxframe
 
-NoteHub Auth is a Next.js application for creating, browsing, and managing personal notes with user authentication.
+Onxframe is a Next.js application for creating, browsing, and managing personal notes with user authentication.
 
 ## Features
 
@@ -20,7 +20,7 @@ npm install
 Create `.env` from `.env.example` and set the API URL:
 
 ```bash
-NEXT_PUBLIC_API_URL=https://09-auth-three-lyart.vercel.app
+NEXT_PUBLIC_API_URL=https://onxframe.vercel.app
 ```
 
 Run the development server:
