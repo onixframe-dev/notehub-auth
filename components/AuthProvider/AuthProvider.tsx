@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
-import { checkSession, getMe, logout } from '@/lib/api/clientApi'
+import { checkSession, getMe } from '@/lib/api/clientApi'
 import { useAuthStore } from '@/lib/store/authStore'
 
 interface AuthProviderProps {
@@ -51,7 +51,6 @@ export default function AuthProvider({ children }: AuthProviderProps) {
           hasLoadedUser.current = false
 
           if (isPrivateRoute) {
-            await logout().catch(() => undefined)
             router.replace('/sign-in')
             return
           }
@@ -61,7 +60,6 @@ export default function AuthProvider({ children }: AuthProviderProps) {
         hasLoadedUser.current = false
 
         if (isPrivateRoute) {
-          await logout().catch(() => undefined)
           router.replace('/sign-in')
           return
         }

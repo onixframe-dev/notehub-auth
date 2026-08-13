@@ -43,8 +43,14 @@ export async function GET() {
         return NextResponse.json({ success: true }, { status: 200 })
       }
     }
+    cookieStore.delete('accessToken')
+    cookieStore.delete('refreshToken')
     return NextResponse.json({ success: false }, { status: 200 })
   } catch (error) {
+    const cookieStore = await cookies()
+    cookieStore.delete('accessToken')
+    cookieStore.delete('refreshToken')
+
     if (isAxiosError(error)) {
       logErrorResponse(error.response?.data)
       return NextResponse.json({ success: false }, { status: 200 })
