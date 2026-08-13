@@ -1,6 +1,6 @@
-import Link from 'next/link'
-import { NOTE_TAGS } from '@/types/note'
-import css from './SidebarNotes.module.css'
+import Link from "next/link";
+import css from "./SidebarNotes.module.css";
+import { NoteFilter } from "@/types/note";
 
 export default function SidebarNotes() {
   return (
@@ -10,7 +10,7 @@ export default function SidebarNotes() {
           All notes
         </Link>
       </li>
-      {NOTE_TAGS.map((tag) => (
+      {Object.values(NoteFilter).map((tag) => (
         <li key={tag} className={css.menuItem}>
           <Link href={`/notes/filter/${tag}`} className={css.menuLink}>
             {tag}
@@ -18,5 +18,5 @@ export default function SidebarNotes() {
         </li>
       ))}
     </ul>
-  )
+  );
 }

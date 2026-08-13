@@ -1,24 +1,18 @@
-export type NoteTag = 'Todo' | 'Work' | 'Personal' | 'Meeting' | 'Shopping'
-
-export const NOTE_TAGS: NoteTag[] = [
-  'Todo',
-  'Work',
-  'Personal',
-  'Meeting',
-  'Shopping',
-]
+export enum NoteFilter {
+  Todo = "Todo",
+  Work = "Work",
+  Personal = "Personal",
+  Meeting = "Meeting",
+  Shopping = "Shopping",
+}
 
 export interface Note {
-  id: string
-  title: string
-  content: string
-  tag: NoteTag
-  createdAt: string
-  updatedAt: string
+  id: string;
+  title: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+  tag: NoteFilter;
 }
 
-export interface NoteDraft {
-  title: string
-  content: string
-  tag: NoteTag
-}
+export type CreateNote = Omit<Note, "id" | "createdAt" | "updatedAt">;

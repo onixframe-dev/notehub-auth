@@ -7,12 +7,24 @@
   color: white;
 }
 
+.headerLink {
+  text-decoration: none;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.headerLink:hover {
+  color: #ddd;
+}
+
 .navigation {
   list-style-type: none;
   margin: 0;
   padding: 0;
   display: flex;
   gap: 1rem;
+  align-items: center;
 }
 
 .navigationItem {
@@ -20,23 +32,12 @@
   align-items: center;
 }
 
-.header .headerLink {
-  color: inherit;
-  font-size: 1.5rem;
-  font-weight: bold;
+.navigationLink {
   text-decoration: none;
-}
-
-.header .headerLink:hover {
-  color: #ddd;
-}
-
-.header .navigationLink {
-  color: inherit;
+  color: white;
   font-size: 1rem;
-  text-decoration: none;
 }
 
-.header .navigationLink:hover {
+.navigationLink:hover {
   color: #ddd;
 }

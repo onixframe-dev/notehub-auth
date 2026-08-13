@@ -53,22 +53,3 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
-.backBtn {
-  align-self: flex-start;
-  padding: 6px 12px;
-  font-size: 14px;
-  color: #333;
-  background-color: #f5f5f5;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  cursor: pointer;
-  text-decoration: none;
-  line-height: 1.2;
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.backBtn:hover {
-  background-color: #e8e8e8;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-}

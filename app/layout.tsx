@@ -1,49 +1,49 @@
-import type { Metadata } from 'next'
-import { Roboto } from 'next/font/google'
-import AuthProvider from '@/components/AuthProvider/AuthProvider'
-import Footer from '@/components/Footer/Footer'
-import Header from '@/components/Header/Header'
-import TanStackProvider from '@/components/TanStackProvider/TanStackProvider'
-import './globals.css'
+import type { Metadata } from "next";
+import "./globals.css";
+import Header from "@/components/Header/Header";
+import Footer from "@/components/Footer/Footer";
+import TanStackProvider from "@/components/TanStackProvider/TanStackProvider";
+import { Roboto } from "next/font/google";
+import AuthProvider from "@/components/AuthProvider/AuthProvider";
 
-const roboto = Roboto({
-  weight: ['400', '500', '700'],
-  variable: '--font-roboto',
-  display: 'swap',
-  subsets: ['latin'],
-})
+export const roboto = Roboto({ variable: "--font-roboto", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'NoteHub',
+  title: "Notehub - A Note-Taking App",
   description:
-    'NoteHub is an application for creating, browsing, and managing personal notes.',
+    "A simple and efficient note-taking application built with Next.js, Zustand, and TanStack Query. Organize your thoughts, ideas, and tasks in one place with ease.",
   openGraph: {
-    title: 'NoteHub',
+    title: "Notehub - A Note-Taking App",
     description:
-      'NoteHub is an application for creating, browsing, and managing personal notes.',
-    url: '/',
-    images: ['https://ac.goit.global/fullstack/react/notehub-og-meta.jpg'],
+      "A simple and efficient note-taking application built with Next.js, Zustand, and TanStack Query. Organize your thoughts, ideas, and tasks in one place with ease.",
+    url: process.env.NEXT_APP_URL,
+    images: [
+      {
+        url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
+        alt: "Notehub - A Note-Taking App",
+      },
+    ],
   },
-}
+};
 
 interface RootLayoutProps {
-  children: React.ReactNode
-  modal: React.ReactNode
+  children: React.ReactNode;
+  modal: React.ReactNode;
 }
 
 export default function RootLayout({ children, modal }: RootLayoutProps) {
   return (
     <html lang="en">
-      <body className={`${roboto.className} ${roboto.variable}`}>
+      <body className={`${roboto.variable}`}>
         <TanStackProvider>
           <AuthProvider>
             <Header />
-            {children}
             {modal}
+            {children}
             <Footer />
           </AuthProvider>
         </TanStackProvider>
       </body>
     </html>
-  )
+  );
 }

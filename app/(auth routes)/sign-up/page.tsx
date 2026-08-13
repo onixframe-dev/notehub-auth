@@ -1,46 +1,36 @@
-'use client'
+"use client";
 
-import { useMutation } from '@tanstack/react-query'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
-import { getErrorMessage, register } from '@/lib/api/clientApi'
-import { useAuthStore } from '@/lib/store/authStore'
-import css from './SignUpPage.module.css'
+import { useRouter } from "next/navigation";
+import css from "./SignUp.module.css";
+import { useState } from "react";
+import { register } from "@/lib/api/clientApi";
+import { useAuthStore } from "@/lib/store/authStore";
 
 export default function SignUpPage() {
-  const router = useRouter()
-  const setUser = useAuthStore((state) => state.setUser)
-  const [error, setError] = useState('')
-
-  const registerMutation = useMutation({
-    mutationFn: register,
-    onSuccess: (user) => {
-      setUser(user)
-      router.push('/profile')
-      router.refresh()
-    },
-    onError: (mutationError) => {
-      setError(getErrorMessage(mutationError))
-    },
-  })
+  const router = useRouter();
+  const [isError, setIsError] = useState(false);
+  const setUser = useAuthStore((s) => s.setUser);
 
   const handleSubmit = async (formData: FormData) => {
-    setError('')
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
 
     try {
-      await registerMutation.mutateAsync({
-        email: String(formData.get('email') ?? '').trim(),
-        password: String(formData.get('password') ?? '').trim(),
-      })
+      const user = await register({ email, password });
+
+      if (user) {
+        setUser(user);
+        router.push("/profile");
+      }
     } catch {
-      // onError handles the visible message.
+      setIsError(true);
     }
-  }
+  };
 
   return (
     <main className={css.mainContent}>
       <h1 className={css.formTitle}>Sign up</h1>
-      <form className={css.form}>
+      <form className={css.form} action={handleSubmit}>
         <div className={css.formGroup}>
           <label htmlFor="email">Email</label>
           <input
@@ -64,18 +54,13 @@ export default function SignUpPage() {
         </div>
 
         <div className={css.actions}>
-          <button
-            type="submit"
-            className={css.submitButton}
-            formAction={handleSubmit}
-            disabled={registerMutation.isPending}
-          >
+          <button type="submit" className={css.submitButton}>
             Register
           </button>
         </div>
 
-        <p className={css.error}>{error}</p>
+        {isError && <p className={css.error}>Something went wrong.</p>}
       </form>
     </main>
-  )
+  );
 }

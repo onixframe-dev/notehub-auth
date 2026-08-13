@@ -1,123 +1,110 @@
-import type { AxiosError } from 'axios'
-import { api } from './api'
-import type { Note, NoteTag } from '@/types/note'
-import type { User } from '@/types/user'
+/* 
+fetchNotes
+fetchNoteById
+createNote
+deleteNote
+register
+login
+logout
+checkSession
+getMe
+updateMe
+*/
 
-interface AuthCredentials {
-  email: string
-  password: string
-}
+import { User } from "@/types/user";
+import { nextServer } from "./api";
+import { CreateNote, Note, NoteFilter } from "@/types/note";
+import { AxiosResponse } from "axios";
 
-interface SessionResponse {
-  success: boolean
-}
+/* Notes */
 
 export interface FetchNotesParams {
-  page: number
-  perPage: number
-  search?: string
-  tag?: NoteTag
+  page?: number;
+  perPage?: number;
+  search?: string;
+  tag?: NoteFilter;
 }
 
 export interface FetchNotesResponse {
-  notes: Note[]
-  totalPages: number
+  notes: Note[];
+  totalPages: number;
 }
 
-export interface CreateNotePayload {
-  title: string
-  content: string
-  tag: NoteTag
-}
-
-interface UpdateProfilePayload {
-  username: string
-}
-
-export const getErrorMessage = (error: unknown): string => {
-  const axiosError = error as AxiosError<{
-    message?: string
-    error?: string
-    response?: { message?: string }
-  }>
-
-  return (
-    axiosError.response?.data?.response?.message ??
-    axiosError.response?.data?.message ??
-    axiosError.response?.data?.error ??
-    axiosError.message ??
-    'Something went wrong.'
-  )
-}
-
-export const fetchNotes = async ({
-  page,
-  perPage,
-  search,
-  tag,
-}: FetchNotesParams): Promise<FetchNotesResponse> => {
-  const response = await api.get<FetchNotesResponse>('/notes', {
-    params: {
-      page,
-      perPage,
-      ...(search ? { search } : {}),
-      ...(tag ? { tag } : {}),
+export const fetchNotes = async (
+  params: FetchNotesParams,
+): Promise<FetchNotesResponse> => {
+  const response: AxiosResponse<FetchNotesResponse> = await nextServer.get(
+    "/notes",
+    {
+      params,
     },
-  })
+  );
+  return response.data;
+};
 
-  return response.data
-}
-
-export const fetchNoteById = async (id: string): Promise<Note> => {
-  const response = await api.get<Note>(`/notes/${id}`)
-
-  return response.data
-}
-
-export const createNote = async (payload: CreateNotePayload): Promise<Note> => {
-  const response = await api.post<Note>('/notes', payload)
-
-  return response.data
-}
+export const createNote = async (payload: CreateNote): Promise<Note> => {
+  const { data }: AxiosResponse<Note> = await nextServer.post(
+    "/notes",
+    payload,
+    {},
+  );
+  return data;
+};
 
 export const deleteNote = async (id: string): Promise<Note> => {
-  const response = await api.delete<Note>(`/notes/${id}`)
+  const { data }: AxiosResponse<Note> = await nextServer.delete(`/notes/${id}`);
+  return data;
+};
 
-  return response.data
+export const fetchNoteById = async (id: string): Promise<Note> => {
+  const { data }: AxiosResponse<Note> = await nextServer.get(`/notes/${id}`);
+  return data;
+};
+
+/* Auth */
+interface userData {
+  email: string;
+  password: string;
 }
 
-export const register = async (credentials: AuthCredentials): Promise<User> => {
-  const response = await api.post<User>('/auth/register', credentials)
-
-  return response.data
+export interface SessionResponse {
+  success: boolean;
 }
 
-export const login = async (credentials: AuthCredentials): Promise<User> => {
-  const response = await api.post<User>('/auth/login', credentials)
-
-  return response.data
+interface UpdateUserData {
+  username?: string;
 }
+
+export const register = async (userData: userData): Promise<User> => {
+  const { data } = await nextServer.post<User>("/auth/register", userData);
+  return data;
+};
+
+export const login = async (userData: userData): Promise<User> => {
+  const { data } = await nextServer.post<User>("/auth/login", userData);
+  return data;
+};
 
 export const logout = async (): Promise<void> => {
-  await api.post('/auth/logout')
-}
-
-export const checkSession = async (): Promise<boolean> => {
-  const response = await api.get<SessionResponse>('/auth/session')
-
-  return response.data.success
-}
+  await nextServer.post("/auth/logout");
+};
 
 export const getMe = async (): Promise<User> => {
-  const response = await api.get<User>('/users/me')
+  const { data } = await nextServer.get<User>("/users/me");
+  return data;
+};
 
-  return response.data
-}
+export const updateMe = async (updateData: UpdateUserData): Promise<User> => {
+  const { data } = await nextServer.patch<User>("/users/me", updateData);
+  return data;
+};
 
-export const updateMe = async (
-  payload: UpdateProfilePayload
-): Promise<User> => {
-  const response = await api.patch<User>('/users/me', payload)
+export const refresh = async () => {
+  const { data } = await nextServer.get("/auth/session");
+  return data;
+};
 
-  return response.data
-}
+export const checkSession = async (): Promise<boolean> => {
+  const { data } = await nextServer.get<SessionResponse>("/auth/session");
+  return data.success;
+};

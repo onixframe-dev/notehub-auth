@@ -1,30 +1,20 @@
-import type { Metadata } from 'next'
-import Image from 'next/image'
-import Link from 'next/link'
-import { redirect } from 'next/navigation'
-import { getMe } from '@/lib/api/serverApi'
-import css from './ProfilePage.module.css'
+import Link from "next/link";
+import css from "./Profile.module.css";
+import { Metadata } from "next";
+import { getMe } from "@/lib/api/serverApi";
+import Image from "next/image";
 
 export const metadata: Metadata = {
-  title: 'Profile | NoteHub',
-  description: 'View your NoteHub profile details.',
+  title: "Profile",
+  description: "View and edit your profile information.",
   openGraph: {
-    title: 'Profile | NoteHub',
-    description: 'View your NoteHub profile details.',
-    url: '/profile',
-    images: ['https://ac.goit.global/fullstack/react/notehub-og-meta.jpg'],
+    title: "Profile",
+    description: "View and edit your profile information.",
   },
-}
+};
 
 export default async function ProfilePage() {
-  let user
-
-  try {
-    user = await getMe()
-  } catch {
-    redirect('/sign-in')
-  }
-
+  const user = await getMe();
   return (
     <main className={css.mainContent}>
       <div className={css.profileCard}>
@@ -49,5 +39,5 @@ export default async function ProfilePage() {
         </div>
       </div>
     </main>
-  )
+  );
 }

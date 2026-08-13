@@ -1,80 +1,61 @@
-'use client'
+"use client";
 
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import Link from 'next/link'
-import { useEffect, useState } from 'react'
-import NoteList from '@/components/NoteList/NoteList'
-import Pagination from '@/components/Pagination/Pagination'
-import SearchBox from '@/components/SearchBox/SearchBox'
-import { fetchNotes } from '@/lib/api/clientApi'
-import type { NoteTag } from '@/types/note'
-import css from '../../NotesPage.module.css'
-
-const PER_PAGE = 12
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
+import css from "./Notes.module.css";
+import SearchBox from "@/components/SearchBox/SearchBox";
+import Pagination from "@/components/Pagination/Pagination";
+import NoteList from "@/components/NoteList/NoteList";
+import { NoteFilter } from "@/types/note";
+import Link from "next/link";
+import { fetchNotes } from "@/lib/api/clientApi";
 
 interface NotesClientProps {
-  tag?: NoteTag
+  tag?: NoteFilter | "all";
 }
 
 export default function NotesClient({ tag }: NotesClientProps) {
-  const [page, setPage] = useState(1)
-  const [search, setSearch] = useState('')
-  const [inputValue, setInputValue] = useState('')
-  const [isMounted, setIsMounted] = useState(false)
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
 
-  useEffect(() => {
-    setIsMounted(true)
-  }, [])
+  const tagValue = (tag !== "all" ? tag : undefined) as NoteFilter;
 
-  useEffect(() => {
-    const timeoutId = window.setTimeout(() => {
-      setSearch(inputValue.trim())
-      setPage(1)
-    }, 300)
+  const debouncedSearch = useDebouncedCallback((value: string) => {
+    setSearch(value);
+    setPage(1);
+  }, 500);
 
-    return () => window.clearTimeout(timeoutId)
-  }, [inputValue])
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["notes", page, search, tag],
+    queryFn: () => fetchNotes({ page, perPage: 12, search, tag: tagValue }),
 
-  const { data, isPending, isError, isFetching } = useQuery({
-    queryKey: ['notes', page, search, tag ?? 'all'],
-    queryFn: () => fetchNotes({ page, perPage: PER_PAGE, search, tag }),
-    placeholderData: keepPreviousData,
-  })
-
-  const handlePageChange = (selectedPage: number) => {
-    setPage(selectedPage)
-  }
-
-  const notes = data?.notes ?? []
-  const totalPages = data?.totalPages ?? 0
-  const showInitialLoader = isPending && !data
-  const showNotes = !isError && notes.length > 0
-
+    placeholderData: (previousData) => previousData,
+  });
   return (
-    <main className={css.app}>
-      <header className={css.toolbar}>
-        <SearchBox value={inputValue} onChange={setInputValue} />
-        {totalPages > 1 && (
-          <Pagination
-            currentPage={page}
-            pageCount={totalPages}
-            onPageChange={handlePageChange}
-          />
-        )}
-        <Link href="/notes/action/create" className={css.button}>
-          Create note +
-        </Link>
-      </header>
+    <>
+      <div className={css.app}>
+        <header className={css.toolbar}>
+          <SearchBox onSearch={debouncedSearch} />
 
-      {showInitialLoader && <p>Loading, please wait...</p>}
-      {isError && <p>Something went wrong.</p>}
-      {showNotes && <NoteList notes={notes} />}
-      {!isError && !showInitialLoader && notes.length === 0 && (
-        <p className={css.emptyMessage}>No notes found.</p>
-      )}
-      {isMounted && isFetching && !showInitialLoader && (
-        <p>Loading, please wait...</p>
-      )}
-    </main>
-  )
+          {data && data.totalPages > 1 && (
+            <Pagination
+              totalPages={data.totalPages}
+              currentPage={page}
+              onPageChange={setPage}
+            />
+          )}
+
+          <Link href={`/notes/action/create`} className={css.button}>
+            Create note +
+          </Link>
+        </header>
+
+        {isLoading && <p>Loading...</p>}
+        {isError && <p>Error loading notes</p>}
+
+        {data && data.notes.length > 0 && <NoteList notes={data.notes} />}
+      </div>
+    </>
+  );
 }

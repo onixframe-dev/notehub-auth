@@ -1,45 +1,35 @@
-'use client'
+"use client";
 
-import { useMutation } from '@tanstack/react-query'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
-import { getErrorMessage, login } from '@/lib/api/clientApi'
-import { useAuthStore } from '@/lib/store/authStore'
-import css from './SignInPage.module.css'
+import { useState } from "react";
+import css from "./SignIn.module.css";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/lib/store/authStore";
+import { login } from "@/lib/api/clientApi";
 
 export default function SignInPage() {
-  const router = useRouter()
-  const setUser = useAuthStore((state) => state.setUser)
-  const [error, setError] = useState('')
-
-  const loginMutation = useMutation({
-    mutationFn: login,
-    onSuccess: (user) => {
-      setUser(user)
-      router.push('/profile')
-      router.refresh()
-    },
-    onError: (mutationError) => {
-      setError(getErrorMessage(mutationError))
-    },
-  })
+  const router = useRouter();
+  const [isError, setIsError] = useState(false);
+  const setUser = useAuthStore((s) => s.setUser);
 
   const handleSubmit = async (formData: FormData) => {
-    setError('')
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
 
     try {
-      await loginMutation.mutateAsync({
-        email: String(formData.get('email') ?? '').trim(),
-        password: String(formData.get('password') ?? '').trim(),
-      })
+      const user = await login({ email, password });
+
+      if (user) {
+        setUser(user);
+        router.push("/profile");
+      }
     } catch {
-      // onError handles the visible message.
+      setIsError(true);
     }
-  }
+  };
 
   return (
     <main className={css.mainContent}>
-      <form className={css.form}>
+      <form className={css.form} action={handleSubmit}>
         <h1 className={css.formTitle}>Sign in</h1>
 
         <div className={css.formGroup}>
@@ -65,18 +55,13 @@ export default function SignInPage() {
         </div>
 
         <div className={css.actions}>
-          <button
-            type="submit"
-            className={css.submitButton}
-            formAction={handleSubmit}
-            disabled={loginMutation.isPending}
-          >
+          <button type="submit" className={css.submitButton}>
             Log in
           </button>
         </div>
 
-        <p className={css.error}>{error}</p>
+        {isError && <p className={css.error}>Something went wrong.</p>}
       </form>
     </main>
-  )
+  );
 }

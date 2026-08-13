@@ -1,80 +1,45 @@
-'use client'
+"use client";
 
-import { useEffect, useRef, useState } from 'react'
-import { usePathname } from 'next/navigation'
-import { checkSession, getMe } from '@/lib/api/clientApi'
-import { useAuthStore } from '@/lib/store/authStore'
+import { checkSession, getMe } from "@/lib/api/clientApi";
+import { useAuthStore } from "@/lib/store/authStore";
+import { useEffect } from "react";
 
 interface AuthProviderProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
-const PRIVATE_ROUTES = ['/notes', '/profile']
-
-export default function AuthProvider({ children }: AuthProviderProps) {
-  const pathname = usePathname()
-  const setUser = useAuthStore((state) => state.setUser)
+const AuthProvider = ({ children }: AuthProviderProps) => {
+  const setUser = useAuthStore((state) => state.setUser);
   const clearIsAuthenticated = useAuthStore(
-    (state) => state.clearIsAuthenticated
-  )
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
-  const [isChecking, setIsChecking] = useState(true)
-  const hasLoadedUser = useRef(false)
-  const isFirstCheck = useRef(true)
-  const isPrivateRoute = PRIVATE_ROUTES.some((route) =>
-    pathname.startsWith(route)
-  )
+    (state) => state.clearIsAuthenticated,
+  );
 
   useEffect(() => {
     const fetchUser = async () => {
-      const shouldBlockRendering =
-        isPrivateRoute && (isFirstCheck.current || !hasLoadedUser.current)
-
-      if (shouldBlockRendering) {
-        setIsChecking(true)
-      }
-
       try {
-        const hasSession = await checkSession()
+        const isAuthenticated = await checkSession();
 
-        if (hasSession) {
-          if (!hasLoadedUser.current || isPrivateRoute) {
-            const user = await getMe()
-            if (user) {
-              setUser(user)
-              hasLoadedUser.current = true
-            }
-          }
-        } else {
-          clearIsAuthenticated()
-          hasLoadedUser.current = false
-
-          return
+        if (!isAuthenticated) {
+          clearIsAuthenticated();
+          return;
         }
+
+        const user = await getMe();
+
+        if (!user) {
+          clearIsAuthenticated();
+          return;
+        }
+
+        setUser(user);
       } catch {
-        clearIsAuthenticated()
-        hasLoadedUser.current = false
-
-        return
-      } finally {
-        isFirstCheck.current = false
-
-        if (shouldBlockRendering) {
-          setIsChecking(false)
-        }
+        clearIsAuthenticated();
       }
-    }
+    };
+    fetchUser();
+  }, [setUser, clearIsAuthenticated]);
 
-    void fetchUser()
-  }, [clearIsAuthenticated, isPrivateRoute, pathname, setUser])
+  return children;
+};
 
-  if (isPrivateRoute && isChecking) {
-    return <p>Loading, please wait...</p>
-  }
-
-  if (isPrivateRoute && !isAuthenticated) {
-    return null
-  }
-
-  return <>{children}</>
-}
+export default AuthProvider;
