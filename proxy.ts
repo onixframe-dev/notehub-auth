@@ -19,7 +19,7 @@ export async function proxy(request: NextRequest) {
 
   if (!accessToken && refreshToken) {
     try {
-      const sessionResponse = await checkSession(cookieStore.toString())
+      const sessionResponse = await checkSession()
       const setCookie = sessionResponse.headers['set-cookie']
 
       if (setCookie) {
@@ -40,6 +40,22 @@ export async function proxy(request: NextRequest) {
           if (parsed.refreshToken) {
             cookieStore.set('refreshToken', parsed.refreshToken, options)
           }
+        }
+
+        if (isAuthRoute) {
+          return NextResponse.redirect(new URL('/profile', request.url), {
+            headers: {
+              Cookie: cookieStore.toString(),
+            },
+          })
+        }
+
+        if (isPrivateRoute) {
+          return NextResponse.next({
+            headers: {
+              Cookie: cookieStore.toString(),
+            },
+          })
         }
       }
     } catch {
