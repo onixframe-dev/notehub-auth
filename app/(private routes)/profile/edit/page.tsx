@@ -40,9 +40,13 @@ export default function EditProfilePage() {
   const handleSubmit = async (formData: FormData) => {
     setError('')
 
-    await updateProfileMutation.mutateAsync({
-      username: String(formData.get('username') ?? '').trim(),
-    })
+    try {
+      await updateProfileMutation.mutateAsync({
+        username: String(formData.get('username') ?? '').trim(),
+      })
+    } catch {
+      // onError handles the visible message.
+    }
   }
 
   if (isPending || !user) {

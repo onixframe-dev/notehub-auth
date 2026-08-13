@@ -27,10 +27,14 @@ export default function SignUpPage() {
   const handleSubmit = async (formData: FormData) => {
     setError('')
 
-    await registerMutation.mutateAsync({
-      email: String(formData.get('email') ?? '').trim(),
-      password: String(formData.get('password') ?? '').trim(),
-    })
+    try {
+      await registerMutation.mutateAsync({
+        email: String(formData.get('email') ?? '').trim(),
+        password: String(formData.get('password') ?? '').trim(),
+      })
+    } catch {
+      // onError handles the visible message.
+    }
   }
 
   return (

@@ -27,10 +27,14 @@ export default function SignInPage() {
   const handleSubmit = async (formData: FormData) => {
     setError('')
 
-    await loginMutation.mutateAsync({
-      email: String(formData.get('email') ?? '').trim(),
-      password: String(formData.get('password') ?? '').trim(),
-    })
+    try {
+      await loginMutation.mutateAsync({
+        email: String(formData.get('email') ?? '').trim(),
+        password: String(formData.get('password') ?? '').trim(),
+      })
+    } catch {
+      // onError handles the visible message.
+    }
   }
 
   return (

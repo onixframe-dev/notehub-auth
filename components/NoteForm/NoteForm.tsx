@@ -42,11 +42,15 @@ export default function NoteForm() {
   }
 
   const handleSubmit = async (formData: FormData) => {
-    await createNoteMutation.mutateAsync({
-      title: String(formData.get('title') ?? '').trim(),
-      content: String(formData.get('content') ?? '').trim(),
-      tag: String(formData.get('tag') ?? 'Todo') as NoteTag,
-    })
+    try {
+      await createNoteMutation.mutateAsync({
+        title: String(formData.get('title') ?? '').trim(),
+        content: String(formData.get('content') ?? '').trim(),
+        tag: String(formData.get('tag') ?? 'Todo') as NoteTag,
+      })
+    } catch {
+      // onError handles the visible message.
+    }
   }
 
   const handleCancel = () => {
