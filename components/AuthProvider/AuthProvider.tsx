@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { checkSession, getMe } from '@/lib/api/clientApi'
 import { useAuthStore } from '@/lib/store/authStore'
 
@@ -13,7 +13,6 @@ const PRIVATE_ROUTES = ['/notes', '/profile']
 
 export default function AuthProvider({ children }: AuthProviderProps) {
   const pathname = usePathname()
-  const router = useRouter()
   const setUser = useAuthStore((state) => state.setUser)
   const clearIsAuthenticated = useAuthStore(
     (state) => state.clearIsAuthenticated
@@ -50,19 +49,13 @@ export default function AuthProvider({ children }: AuthProviderProps) {
           clearIsAuthenticated()
           hasLoadedUser.current = false
 
-          if (isPrivateRoute) {
-            router.replace('/sign-in')
-            return
-          }
+          return
         }
       } catch {
         clearIsAuthenticated()
         hasLoadedUser.current = false
 
-        if (isPrivateRoute) {
-          router.replace('/sign-in')
-          return
-        }
+        return
       } finally {
         isFirstCheck.current = false
 
@@ -73,7 +66,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     }
 
     void fetchUser()
-  }, [clearIsAuthenticated, isPrivateRoute, pathname, router, setUser])
+  }, [clearIsAuthenticated, isPrivateRoute, pathname, setUser])
 
   if (isPrivateRoute && isChecking) {
     return <p>Loading, please wait...</p>
