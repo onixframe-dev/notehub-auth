@@ -15,13 +15,22 @@ const createServerConfig = (cookie: string) => ({
   },
 })
 
+const getCookieHeader = async (cookie?: string) => {
+  if (cookie) {
+    return cookie
+  }
+
+  const cookieStore = await cookies()
+  return cookieStore.toString()
+}
+
 export const fetchNotes = async (
   params: FetchNotesParams,
   cookie?: string
 ): Promise<FetchNotesResponse> => {
-  const cookieStore = await cookies()
+  const cookieHeader = await getCookieHeader(cookie)
   const response = await api.get<FetchNotesResponse>('/notes', {
-    ...createServerConfig(cookie ?? cookieStore.toString()),
+    ...createServerConfig(cookieHeader),
     params,
   })
 
@@ -32,21 +41,18 @@ export const fetchNoteById = async (
   id: string,
   cookie?: string
 ): Promise<Note> => {
-  const cookieStore = await cookies()
+  const cookieHeader = await getCookieHeader(cookie)
   const response = await api.get<Note>(
     `/notes/${id}`,
-    createServerConfig(cookie ?? cookieStore.toString())
+    createServerConfig(cookieHeader)
   )
 
   return response.data
 }
 
 export const getMe = async (cookie?: string): Promise<User> => {
-  const cookieStore = await cookies()
-  const response = await api.get<User>(
-    '/users/me',
-    createServerConfig(cookie ?? cookieStore.toString())
-  )
+  const cookieHeader = await getCookieHeader(cookie)
+  const response = await api.get<User>('/users/me', createServerConfig(cookieHeader))
 
   return response.data
 }
@@ -54,10 +60,10 @@ export const getMe = async (cookie?: string): Promise<User> => {
 export const checkSession = async (
   cookie?: string
 ): Promise<AxiosResponse<SessionResponse>> => {
-  const cookieStore = await cookies()
+  const cookieHeader = await getCookieHeader(cookie)
   const response = await api.get<SessionResponse>(
     '/auth/session',
-    createServerConfig(cookie ?? cookieStore.toString())
+    createServerConfig(cookieHeader)
   )
 
   return response
