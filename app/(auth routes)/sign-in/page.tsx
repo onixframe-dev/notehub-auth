@@ -24,10 +24,10 @@ export default function SignInPage() {
     },
   })
 
-  const handleSubmit = (formData: FormData) => {
+  const handleSubmit = async (formData: FormData) => {
     setError('')
 
-    loginMutation.mutate({
+    await loginMutation.mutateAsync({
       email: String(formData.get('email') ?? '').trim(),
       password: String(formData.get('password') ?? '').trim(),
     })

@@ -41,8 +41,8 @@ export default function NoteForm() {
     setDraft({ [name]: value } as Partial<NoteDraft>)
   }
 
-  const handleSubmit = (formData: FormData) => {
-    createNoteMutation.mutate({
+  const handleSubmit = async (formData: FormData) => {
+    await createNoteMutation.mutateAsync({
       title: String(formData.get('title') ?? '').trim(),
       content: String(formData.get('content') ?? '').trim(),
       tag: String(formData.get('tag') ?? 'Todo') as NoteTag,

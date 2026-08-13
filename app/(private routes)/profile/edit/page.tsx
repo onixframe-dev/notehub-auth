@@ -37,10 +37,10 @@ export default function EditProfilePage() {
     }
   }, [user])
 
-  const handleSubmit = (formData: FormData) => {
+  const handleSubmit = async (formData: FormData) => {
     setError('')
 
-    updateProfileMutation.mutate({
+    await updateProfileMutation.mutateAsync({
       username: String(formData.get('username') ?? '').trim(),
     })
   }

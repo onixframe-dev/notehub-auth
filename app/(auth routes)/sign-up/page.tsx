@@ -24,10 +24,10 @@ export default function SignUpPage() {
     },
   })
 
-  const handleSubmit = (formData: FormData) => {
+  const handleSubmit = async (formData: FormData) => {
     setError('')
 
-    registerMutation.mutate({
+    await registerMutation.mutateAsync({
       email: String(formData.get('email') ?? '').trim(),
       password: String(formData.get('password') ?? '').trim(),
     })
