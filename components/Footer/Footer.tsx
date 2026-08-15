@@ -10,13 +10,13 @@ export default function Footer() {
         <div className={css.wrap}>
           <p>
             Developer:{" "}
-            <Link href="https://github.com/OleksandrProtchenko">
-              Oleksandr Protchenko
+            <Link href="https://github.com/onixframe-dev">
+              Hordzich Ihar
             </Link>
           </p>
           <p>
             Contact us:
-            <Link href="mailto:student@notehub.app">student@notehub.app</Link>
+            <Link href="mailto:onixframe.dev@gmail.com">onixframe.dev@gmail.com.app</Link>
           </p>
         </div>
       </div>
