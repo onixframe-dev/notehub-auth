@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     title: "Notehub - A Note-Taking App",
     description:
       "A simple and efficient note-taking application built with Next.js, Zustand, and TanStack Query. Organize your thoughts, ideas, and tasks in one place with ease.",
-    url: process.env.NEXT_APP_URL,
+    url: process.env.NEXT_PUBLIC_API_URL,
     images: [
       {
         url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",

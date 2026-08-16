@@ -24,7 +24,7 @@ export const generateMetadata = async ({
     openGraph: {
       title: actualTag,
       description: `Information about - ${actualTag} notes.`,
-      url: `${process.env.NEXT_APP_URL}/notes/filter/${actualTag}`,
+      url: `${process.env.NEXT_PUBLIC_API_URL}/notes/filter/${actualTag}`,
       images: [
         {
           url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
